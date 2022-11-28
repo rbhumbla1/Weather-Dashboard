@@ -22,6 +22,32 @@ var icon = "";
 // finished rendering all the elements in the html.
 $(function () {
 
+    //Cleanup old city weather and forecast
+    function removeOldWeatherForecast() {
+        console.log('remove old weather');
+
+        for (x = 0; x < 6; x++) {
+            var line = $('#line1' + x);
+
+            if (line !== null)
+                line.remove();
+            line = $('#line2' + x)
+            if (line !== null)
+                line.remove();
+            line = $('#line3' + x)
+            if (line !== null)
+                line.remove();
+            line = $('#line4' + x)
+            if (line !== null)
+                line.remove();
+            line = $('#icon' + x)
+            if (line !== null)
+                line.remove();
+        }
+
+
+    }
+
     //get latitute and logitude for the city using openweathermap geocoding APIl to use in openweathermap API
     function getGeoCoords(city) {
 
@@ -119,14 +145,18 @@ $(function () {
                     })
                     .then(function (data) {
 
+                        removeOldWeatherForecast();
+
                         //add current weather to "today" section
                         line1 = $('<p>');
                         line1.attr('class', 'fw-bolder fs-2 p-2');
+                        line1.attr('id', 'line10');
                         line1.text(city + " (" + dayjs().format('MM/DD/YYYY') + ") ");
                         // todayEl.append(line1);
 
                         icon = $('<img>');
                         icon.attr('src', 'http://openweathermap.org/img/wn/' + data.weather[0].icon + '.png');
+                        icon.attr('id', 'icon0');
                         line1.append(icon);
                         //todayEl.prepend(line1, icon);
                         todayEl.append(line1);
@@ -134,16 +164,19 @@ $(function () {
 
                         line2 = $('<p>');
                         line2.addClass('p-2 fs-4');
+                        line2.attr('id', 'line20');
                         line2.text("Temp: " + data.main.temp_max);
                         todayEl.append(line2);
 
                         line3 = $('<p>');
                         line3.addClass('p-2 fs-4');
+                        line3.attr('id', 'line30');
                         line3.text("Wind: " + data.wind.speed + "MPH");
                         todayEl.append(line3);
 
                         line4 = $('<p>');
                         line4.addClass('p-2 fs-4');
+                        line4.attr('id', 'line40');
                         line4.text("Humidity: " + data.main.humidity + "%");
                         todayEl.append(line4);
 
@@ -163,7 +196,7 @@ $(function () {
                         console.log(data);
 
                         var currDate = dayjs().format("YYYY-MM-DD");
-                        var currTime = dayjs().format('hh:mm:ss');
+                        var currTime = dayjs().format('HH:mm:ss');
                         var useTime = "";
 
                         if (currTime < "03:00:00")
@@ -183,7 +216,9 @@ $(function () {
                         else
                             useTime = "03:00:00";
 
-                        console.log("useTime = " + useTime);
+                        console.log("currTime =" + currTime + " useTime = " + useTime);
+
+                        // removeOldWeatherForecast();
 
                         for (x = 1; x < 6; x++) {
                             var useDate = dayjs().add(x, 'day').format("YYYY-MM-DD");
@@ -197,28 +232,34 @@ $(function () {
 
                                     var dayEl = $('#day' + x);
 
+
                                     //add current weather to "today" section
                                     line1 = $('<p>');
                                     line1.attr('class', 'fw-bolder fs-5 p-2');
+                                    line1.attr('id', 'line1' + x);
                                     line1.text(dayjs().add(x, 'day').format('MM/DD/YYYY'));
                                     dayEl.append(line1);
 
                                     icon = $('<img>');
                                     icon.attr('src', 'http://openweathermap.org/img/wn/' + data.list[i].weather[0].icon + '.png');
+                                    icon.attr('id', 'icon' + x);
                                     dayEl.append(icon);
 
                                     line2 = $('<p>');
                                     line2.addClass('p-2 fs-6');
+                                    line2.attr('id', 'line2' + x);
                                     line2.text("Temp: " + data.list[i].main.temp_max);
                                     dayEl.append(line2);
 
                                     line3 = $('<p>');
                                     line3.addClass('p-2 fs-6');
+                                    line3.attr('id', 'line3' + x);
                                     line3.text("Wind: " + data.list[i].wind.speed + "MPH");
                                     dayEl.append(line3);
 
                                     line4 = $('<p>');
                                     line4.addClass('p-2 fs-6');
+                                    line4.attr('id', 'line4' + x);
                                     line4.text("Humidity: " + data.list[i].main.humidity + "%");
                                     dayEl.append(line4);
 
@@ -281,7 +322,7 @@ $(function () {
         event.preventDefault();
         console.log('in click');
         console.log('inclick = ' + cityEl.val());
-        getCityWeather(cityEl.val().trim());
+        getCityWeather(cityEl.val().trim(), true);
     });
 
     document.addEventListener('click', function (event) {
