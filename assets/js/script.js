@@ -48,6 +48,31 @@ $(function () {
 
     }
 
+    function getTimetoUseInAPI(){
+        
+        var currTime = dayjs().format('HH:mm:ss');
+        var useTime = "";
+
+        if (currTime < "03:00:00")
+            useTime = "00:00:00";
+        else if (currTime < "06:00:00")
+            useTime = "03:00:00";
+        else if (currTime < "09:00:00")
+            useTime = "06:00:00";
+        else if (currTime < "12:00:00")
+            useTime = "09:00:00";
+        else if (currTime < "15:00:00")
+            useTime = "12:00:00";
+        else if (currTime < "18:00:00")
+            useTime = "15:00:00";
+        else if (currTime < "21:00:00")
+            useTime = "18:00:00";
+        else
+            useTime = "03:00:00";
+
+            return useTime;
+    }
+
     //get latitute and logitude for the city using openweathermap geocoding APIl to use in openweathermap API
     function getGeoCoords(city) {
 
@@ -115,10 +140,6 @@ $(function () {
             saveCity(city);
         }
 
-        //get latitute and logitude fore the city to use in openweather API  
-        // setTimeout(getGeoCoords(city), 10000);
-        // console.log("getCityweather..." + coords.lat);
-
         var geoCordURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + apiKey;
         console.log(geoCordURL);
 
@@ -165,19 +186,19 @@ $(function () {
                         line2 = $('<p>');
                         line2.addClass('p-2 fs-4');
                         line2.attr('id', 'line20');
-                        line2.text("Temp: " + data.main.temp_max);
+                        line2.text("Temp: " + data.main.temp_max + "\u00B0F");
                         todayEl.append(line2);
 
                         line3 = $('<p>');
                         line3.addClass('p-2 fs-4');
                         line3.attr('id', 'line30');
-                        line3.text("Wind: " + data.wind.speed + "MPH");
+                        line3.text("Wind: " + data.wind.speed + " MPH");
                         todayEl.append(line3);
 
                         line4 = $('<p>');
                         line4.addClass('p-2 fs-4');
                         line4.attr('id', 'line40');
-                        line4.text("Humidity: " + data.main.humidity + "%");
+                        line4.text("Humidity: " + data.main.humidity + " %");
                         todayEl.append(line4);
 
                     });
@@ -193,32 +214,10 @@ $(function () {
                         return response.json();
                     })
                     .then(function (data) {
-                        console.log(data);
 
-                        var currDate = dayjs().format("YYYY-MM-DD");
-                        var currTime = dayjs().format('HH:mm:ss');
-                        var useTime = "";
+                         var currDate = dayjs().format("YYYY-MM-DD");
 
-                        if (currTime < "03:00:00")
-                            useTime = "00:00:00";
-                        else if (currTime < "06:00:00")
-                            useTime = "03:00:00";
-                        else if (currTime < "09:00:00")
-                            useTime = "06:00:00";
-                        else if (currTime < "12:00:00")
-                            useTime = "09:00:00";
-                        else if (currTime < "15:00:00")
-                            useTime = "12:00:00";
-                        else if (currTime < "18:00:00")
-                            useTime = "15:00:00";
-                        else if (currTime < "21:00:00")
-                            useTime = "18:00:00";
-                        else
-                            useTime = "03:00:00";
-
-                        console.log("currTime =" + currTime + " useTime = " + useTime);
-
-                        // removeOldWeatherForecast();
+                        var useTime = getTimetoUseInAPI();
 
                         for (x = 1; x < 6; x++) {
                             var useDate = dayjs().add(x, 'day').format("YYYY-MM-DD");
@@ -248,19 +247,19 @@ $(function () {
                                     line2 = $('<p>');
                                     line2.addClass('p-2 fs-6');
                                     line2.attr('id', 'line2' + x);
-                                    line2.text("Temp: " + data.list[i].main.temp_max);
+                                    line2.text("Temp: " + data.list[i].main.temp_max + "\u00B0F");
                                     dayEl.append(line2);
 
                                     line3 = $('<p>');
                                     line3.addClass('p-2 fs-6');
                                     line3.attr('id', 'line3' + x);
-                                    line3.text("Wind: " + data.list[i].wind.speed + "MPH");
+                                    line3.text("Wind: " + data.list[i].wind.speed + " MPH");
                                     dayEl.append(line3);
 
                                     line4 = $('<p>');
                                     line4.addClass('p-2 fs-6');
                                     line4.attr('id', 'line4' + x);
-                                    line4.text("Humidity: " + data.list[i].main.humidity + "%");
+                                    line4.text("Humidity: " + data.list[i].main.humidity + " %");
                                     dayEl.append(line4);
 
                                     break;
