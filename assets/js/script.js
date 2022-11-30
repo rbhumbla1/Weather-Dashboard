@@ -48,8 +48,8 @@ $(function () {
 
     }
 
-    function getTimetoUseInAPI(){
-        
+    function getTimetoUseInAPI() {
+
         var currTime = dayjs().format('HH:mm:ss');
         var useTime = "";
 
@@ -70,33 +70,9 @@ $(function () {
         else
             useTime = "03:00:00";
 
-            return useTime;
+        return useTime;
     }
 
-    //get latitute and logitude for the city using openweathermap geocoding APIl to use in openweathermap API
-    function getGeoCoords(city) {
-
-        var requestURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + apiKey;
-        console.log(requestURL);
-
-        fetch(requestURL)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                console.log(data);
-                console.log(data[0].lat, data[0].lon);
-
-
-                coords.lat = data[0].lat,
-                    coords.lon = data[0].lon
-
-                console.log(coords.lat, coords.lon);
-
-
-            });
-
-    }
 
     //save the current city search in local storage
     function saveCity(city) {
@@ -168,6 +144,8 @@ $(function () {
 
                         removeOldWeatherForecast();
 
+                        console.log(data);
+
                         //add current weather to "today" section
                         line1 = $('<p>');
                         line1.attr('class', 'fw-bolder fs-2 p-2');
@@ -215,9 +193,10 @@ $(function () {
                     })
                     .then(function (data) {
 
-                         var currDate = dayjs().format("YYYY-MM-DD");
+                        var currDate = dayjs().format("YYYY-MM-DD");
 
                         var useTime = getTimetoUseInAPI();
+                        console.log(data);
 
                         for (x = 1; x < 6; x++) {
                             var useDate = dayjs().add(x, 'day').format("YYYY-MM-DD");
@@ -227,7 +206,7 @@ $(function () {
                             var i = 0;
                             while (i < data.list.length) {
                                 if (useDateTime === data.list[i].dt_txt) {
-                                    console.log(" and for " + x + " this dt " + useDateTime);
+                                    console.log(" and for " + x + " this dt " + useDateTime + "data time for " + i + " = " + data.list[i].dt_txt);
 
                                     var dayEl = $('#day' + x);
 
@@ -281,10 +260,17 @@ $(function () {
 
         console.log("getlastSearchWeather");
 
-        if (savedCities.length === 0)
-            return;
+        var lastCity = "";
 
-        var lastCity = savedCities[savedCities.length - 1];
+        //If no saved local storage, use browser location to get a city to display
+        if (savedCities.length === 0) {
+            lastCity = "San Francisco";
+            savedCities[savedCities.length] = lastCity;
+            //write savedCities to local storage
+            localStorage.setItem("savedCities", JSON.stringify(savedCities));
+            curCity = lastCity;
+        } else
+            lastCity = savedCities[savedCities.length - 1];
 
         cityEl.val(lastCity);
 
