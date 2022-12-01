@@ -116,7 +116,7 @@ $(function () {
             saveCity(city);
         }
 
-        var geoCordURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + apiKey;
+        var geoCordURL = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + apiKey;
         console.log(geoCordURL);
 
         fetch(geoCordURL)
@@ -154,7 +154,7 @@ $(function () {
                         // todayEl.append(line1);
 
                         icon = $('<img>');
-                        icon.attr('src', 'http://openweathermap.org/img/wn/' + data.weather[0].icon + '.png');
+                        icon.attr('src', 'https://openweathermap.org/img/wn/' + data.weather[0].icon + '.png');
                         icon.attr('id', 'icon0');
                         line1.append(icon);
                         //todayEl.prepend(line1, icon);
@@ -219,7 +219,7 @@ $(function () {
                                     dayEl.append(line1);
 
                                     icon = $('<img>');
-                                    icon.attr('src', 'http://openweathermap.org/img/wn/' + data.list[i].weather[0].icon + '.png');
+                                    icon.attr('src', 'https://openweathermap.org/img/wn/' + data.list[i].weather[0].icon + '.png');
                                     icon.attr('id', 'icon' + x);
                                     dayEl.append(icon);
 
