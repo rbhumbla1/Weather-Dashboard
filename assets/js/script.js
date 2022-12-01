@@ -1,15 +1,17 @@
-var mainEl = $('#main-area');
-var cityEl = $('#searchCity');
+//Global variables
+var mainEl = $('#main-area');  //for displayingweather
+var cityEl = $('#searchCity'); //user input
 var searchBtnEl = $('#searchButton');
-var savedSearchEl = $('#savedSearch');
+var savedSearchEl = $('#savedSearch');//area to display list of previous searches
 var todayEl = $('#today');
 var curCity = "";
-var savedCities = [];
-var apiKey = "b0bb308922887642a5d7fe5054695311";
-var coords = {
+var savedCities = []; //for saving in local storage
+var apiKey = "b0bb308922887642a5d7fe5054695311";  //apikey for openweathermap API access
+var coords = {     //to store latitute and longitude
     lat: 0.0000,
     lon: 0.0000
 }
+//variables to create lines in weather display
 var line1 = "";
 var line2 = "";
 var line3 = "";
@@ -22,7 +24,7 @@ var icon = "";
 // finished rendering all the elements in the html.
 $(function () {
 
-    //Cleanup old city weather and forecast
+    //Cleanup old city current weather and forecast
     function removeOldWeatherForecast() {
         console.log('remove old weather');
 
@@ -47,6 +49,11 @@ $(function () {
 
 
     }
+
+    //this function is trying to find a time slot in data returned from weather API to closest to the current time of the 
+    //weather API returns data for every 3 hour.
+    //You will see that if you search for east coast cities, the current weather will show current weather 
+    //but the forecast will be of the time slot of the user.
 
     function getTimetoUseInAPI() {
 
@@ -99,7 +106,6 @@ $(function () {
             var btn = $('<button>');
 
             btn.attr('class', 'p-2 m-2 rounded-pill w-100 border-0');
-            // btn.attr('id', 'savedCity');
             btn.text(curCity);
 
             savedSearchEl.append(btn);
@@ -107,7 +113,7 @@ $(function () {
         }
     }
 
-    //Get wweather of a city
+    //Get weather of a city
     function getCityWeather(city, save) {
 
         console.log("getcityweather");
@@ -116,6 +122,7 @@ $(function () {
             saveCity(city);
         }
 
+        //use openweathermap GeoCoding API to get latitute, longitude of a city to be used in weather APIS
         var geoCordURL = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + apiKey;
         console.log(geoCordURL);
 
@@ -125,23 +132,23 @@ $(function () {
             })
             .then(function (data) {
                 console.log(data);
-                console.log(data[0].lat, data[0].lon);
 
-
-                coords.lat = data[0].lat,
-                    coords.lon = data[0].lon
+                //get coordinates from the data returned by geocoding API
+                coords.lat = data[0].lat;
+                coords.lon = data[0].lon;
 
                 console.log(coords.lat, coords.lon);
 
                 //call the openweathermap API with coordinates to get current day forecast
-                var requestUrl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + coords.lat + '&lon=' + coords.lon + '&units=imperial&appid=' + apiKey;
+                var currentRequestUrl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + coords.lat + '&lon=' + coords.lon + '&units=imperial&appid=' + apiKey;
 
-                fetch(requestUrl)
+                fetch(currentRequestUrl)
                     .then(function (response) {
                         return response.json();
                     })
                     .then(function (data) {
 
+                        //cleanup the old weather
                         removeOldWeatherForecast();
 
                         console.log(data);
@@ -151,8 +158,8 @@ $(function () {
                         line1.attr('class', 'fw-bolder fs-2 p-2');
                         line1.attr('id', 'line10');
                         line1.text(city + " (" + dayjs().format('MM/DD/YYYY') + ") ");
-                        // todayEl.append(line1);
 
+                        //add icon to line1 of current weather
                         icon = $('<img>');
                         icon.attr('src', 'https://openweathermap.org/img/wn/' + data.weather[0].icon + '.png');
                         icon.attr('id', 'icon0');
@@ -183,9 +190,9 @@ $(function () {
 
                 //call the openweathermap API with coordinates to get 5 day forecast
 
-                requestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + coords.lat + '&lon=' + coords.lon + '&cnt=40&units=imperial&appid=' + apiKey;
+                forecastRequestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + coords.lat + '&lon=' + coords.lon + '&cnt=40&units=imperial&appid=' + apiKey;
 
-                console.log(requestUrl);
+                console.log(forecastRequestUrl);
 
                 fetch(requestUrl)
                     .then(function (response) {
@@ -196,22 +203,23 @@ $(function () {
                         var currDate = dayjs().format("YYYY-MM-DD");
 
                         var useTime = getTimetoUseInAPI();
-                        console.log(data);
+                        //console.log(data);
 
+                        //we will use this loop 5 times to display 5 day forecase
                         for (x = 1; x < 6; x++) {
                             var useDate = dayjs().add(x, 'day').format("YYYY-MM-DD");
 
                             var useDateTime = useDate + " " + useTime;
 
                             var i = 0;
+                            //this loop will find the correct entry in list array of data based on current time of the user location
                             while (i < data.list.length) {
                                 if (useDateTime === data.list[i].dt_txt) {
-                                    console.log(" and for " + x + " this dt " + useDateTime + "data time for " + i + " = " + data.list[i].dt_txt);
+                                    //console.log(" for " + x + " this dt " + useDateTime + "data time for " + i + " = " + data.list[i].dt_txt);
 
                                     var dayEl = $('#day' + x);
 
-
-                                    //add current weather to "today" section
+                                    //add forecast weather to "forecast" section
                                     line1 = $('<p>');
                                     line1.attr('class', 'fw-bolder fs-5 p-2');
                                     line1.attr('id', 'line1' + x);
