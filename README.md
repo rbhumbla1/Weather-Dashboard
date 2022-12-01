@@ -15,7 +15,9 @@ Weather dashboard displays the current weather and a 5-day forecast of the city 
     * The current weather and 5 day forecast is displayed on right side.
 3. When the user clicks on a city in the search history then they are presented with current and future conditions for that city.
 
-![Note:]There is a known issue in the application.  Sometime the day and night weather condition icons are different between current and forecasted weather.  For example,  you will see that if a user on west coast search for east coast city, depending on the time of the day, the current weather will show current weather of east coast but the forecast will be of the time slot of the user.  So if it night on east coast, the current weather icon will be for night but as it is still day on west coast the forecast icons will be day time ones.  It can be solved given time but at this time it is out of scope.
+![Notes:]There are some known issues in the application.  
+1. Sometime the day and night weather condition icons are different between current and forecasted weather.  For example,  you will see that if a user on west coast search for east coast city, depending on the time of the day, the current weather will show current weather of east coast but the forecast will be of the time slot of the user.  So if it night on east coast, the current weather icon will be for night but as it is still day on west coast the forecast icons will be day time ones.  It can be solved given time but at this time it is out of scope.
+2. Occasionally, due to delay in response from openweathermap api, you might not see the forecast weather of default city "San Francisco" when you start the application.  Please refresh the page and you will get the correct response.
 
 
 ## Mock Up
