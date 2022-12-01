@@ -1,3 +1,8 @@
+//import API key 
+import{
+    apiKey
+} from './config.js';
+
 //Global variables
 var mainEl = $('#main-area');  //for displayingweather
 var cityEl = $('#searchCity'); //user input
@@ -6,7 +11,6 @@ var savedSearchEl = $('#savedSearch');//area to display list of previous searche
 var todayEl = $('#today');
 var curCity = "";
 var savedCities = []; //for saving in local storage
-var apiKey = "b0bb308922887642a5d7fe5054695311";  //apikey for openweathermap API access
 var coords = {     //to store latitute and longitude
     lat: 0.0000,
     lon: 0.0000
@@ -26,9 +30,8 @@ $(function () {
 
     //Cleanup old city current weather and forecast
     function removeOldWeatherForecast() {
-        console.log('remove old weather');
 
-        for (x = 0; x < 6; x++) {
+        for (var x = 0; x < 6; x++) {
             var line = $('#line1' + x);
 
             if (line !== null)
@@ -84,7 +87,7 @@ $(function () {
     //save the current city search in local storage
     function saveCity(city) {
         //add the latest city searched to the savedCities
-        console.log('savecity = ' + city);
+        
         city = city.trim();
         savedCities[savedCities.length] = city;
 
@@ -116,7 +119,6 @@ $(function () {
     //Get weather of a city
     function getCityWeather(city, save) {
 
-        console.log("getcityweather");
         //saveCity in local Storage if new new search
         if (save) {
             saveCity(city);
@@ -124,20 +126,16 @@ $(function () {
 
         //use openweathermap GeoCoding API to get latitute, longitude of a city to be used in weather APIS
         var geoCordURL = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + apiKey;
-        console.log(geoCordURL);
 
         fetch(geoCordURL)
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                console.log(data);
 
                 //get coordinates from the data returned by geocoding API
                 coords.lat = data[0].lat;
                 coords.lon = data[0].lon;
-
-                console.log(coords.lat, coords.lon);
 
                 //call the openweathermap API with coordinates to get current day forecast
                 var currentRequestUrl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + coords.lat + '&lon=' + coords.lon + '&units=imperial&appid=' + apiKey;
@@ -150,8 +148,6 @@ $(function () {
 
                         //cleanup the old weather
                         removeOldWeatherForecast();
-
-                        console.log(data);
 
                         //add current weather to "today" section
                         line1 = $('<p>');
@@ -190,11 +186,9 @@ $(function () {
 
                 //call the openweathermap API with coordinates to get 5 day forecast
 
-                forecastRequestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + coords.lat + '&lon=' + coords.lon + '&cnt=40&units=imperial&appid=' + apiKey;
+                var forecastRequestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + coords.lat + '&lon=' + coords.lon + '&cnt=40&units=imperial&appid=' + apiKey;
 
-                console.log(forecastRequestUrl);
-
-                fetch(requestUrl)
+                fetch(forecastRequestUrl)
                     .then(function (response) {
                         return response.json();
                     })
@@ -206,7 +200,7 @@ $(function () {
                         //console.log(data);
 
                         //we will use this loop 5 times to display 5 day forecase
-                        for (x = 1; x < 6; x++) {
+                        for (var x = 1; x < 6; x++) {
                             var useDate = dayjs().add(x, 'day').format("YYYY-MM-DD");
 
                             var useDateTime = useDate + " " + useTime;
@@ -215,8 +209,7 @@ $(function () {
                             //this loop will find the correct entry in list array of data based on current time of the user location
                             while (i < data.list.length) {
                                 if (useDateTime === data.list[i].dt_txt) {
-                                    //console.log(" for " + x + " this dt " + useDateTime + "data time for " + i + " = " + data.list[i].dt_txt);
-
+                                    
                                     var dayEl = $('#day' + x);
 
                                     //add forecast weather to "forecast" section
@@ -266,8 +259,6 @@ $(function () {
     //Display the weather of last city searched whent he program starts
     function getLastSearchWeather() {
 
-        console.log("getlastSearchWeather");
-
         var lastCity = "";
 
         //If no saved local storage, use browser location to get a city to display
@@ -290,7 +281,7 @@ $(function () {
     // Display all saved Cities in grey pill box buttons under Searchform on the sidebar
     function displaySavedCities() {
 
-        for (i = 0; i < savedCities.length; i++) {
+        for (var i = 0; i < savedCities.length; i++) {
             var btn = $('<button>');
 
             btn.attr('class', 'p-2 m-2 rounded-pill w-100 border-0');
@@ -313,8 +304,7 @@ $(function () {
 
     searchBtnEl.on('click', function (event) {
         event.preventDefault();
-        console.log('in click');
-        console.log('inclick = ' + cityEl.val());
+       
         getCityWeather(cityEl.val().trim(), true);
     });
 
@@ -324,7 +314,7 @@ $(function () {
         event.preventDefault();
 
         if (el.matches('button') && (el.innerHTML !== 'Search')) {
-            console.log("saved city clicked..." + el.innerHTML);
+            
             cityEl.val(el.innerHTML);
             getCityWeather(cityEl.val().trim(), false);
         }
