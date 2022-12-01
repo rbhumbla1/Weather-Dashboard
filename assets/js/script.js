@@ -1,7 +1,7 @@
 //import API key 
 import{
     apiKey
-} from './config.js';
+} from './config-new.js';
 
 //Global variables
 var mainEl = $('#main-area');  //for displayingweather
@@ -96,7 +96,6 @@ $(function () {
         localStorage.setItem("savedCities", JSON.stringify(savedCities));
 
         //display in saved search area
-        console.log("curcity =  " + curCity + ".");
         if (curCity !== city) {
 
             //return for first iteration
