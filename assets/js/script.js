@@ -1,7 +1,7 @@
 //import API key 
 import{
     apiKey
-} from './config.js';
+} from './config-new.js';
 
 //Global variables
 var mainEl = $('#main-area');  //for displayingweather
